@@ -52,7 +52,7 @@ public:
 
     points_sub = nh.subscribe("/filtered_points", 256, &ScanMatchingOdometryNodelet::cloud_callback, this);
     read_until_pub = nh.advertise<std_msgs::Header>("/scan_matching_odometry/read_until", 32);
-    odom_pub = nh.advertise<nav_msgs::Odometry>("/odom", 32);
+    odom_pub = nh.advertise<nav_msgs::Odometry>(odom_output_frame, 32);
     trans_pub = nh.advertise<geometry_msgs::TransformStamped>("/scan_matching_odometry/transform", 32);
     status_pub = private_nh.advertise<ScanMatchingStatus>("/scan_matching_odometry/status", 8);
     aligned_points_pub = nh.advertise<sensor_msgs::PointCloud2>("/aligned_points", 32);
@@ -67,6 +67,7 @@ private:
     points_topic = pnh.param<std::string>("points_topic", "/velodyne_points");
     odom_frame_id = pnh.param<std::string>("odom_frame_id", "odom");
     robot_odom_frame_id = pnh.param<std::string>("robot_odom_frame_id", "robot_odom");
+    odom_output_frame = pnh.param<std::string>("odom_output_frame", "/odom");
 
     // The minimum tranlational distance and rotation angle between keyframes.
     // If this value is zero, frames are always compared with the previous frame
@@ -353,6 +354,7 @@ private:
   std::string points_topic;
   std::string odom_frame_id;
   std::string robot_odom_frame_id;
+  std::string odom_output_frame;
   ros::Publisher read_until_pub;
 
   // keyframe parameters
